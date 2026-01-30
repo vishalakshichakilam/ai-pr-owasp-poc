@@ -1,0 +1,45 @@
+name: AI OWASP Scan Gate (Hugging Face)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  ai_scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create PR diff
+        run: |
+          git fetch origin main
+          git diff origin/main...HEAD > pr.diff
+          echo "Diff chars:"
+          wc -c pr.diff
+
+      - name: Install Python deps
+        run: |
+          python3 -m pip install --upgrade pip
+          pip3 install requests
+
+      - name: Run AI scan (PASS/FAIL)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_MODEL: "HuggingFaceH4/zephyr-7b-beta"
+          MAX_DIFF_CHARS: "12000"
+        run: |
+          python3 ai_scan_llm.py pr.diff
+
+      - name: Show result
+        if: always()
+        run: |
+          echo "===== AI Scan Result ====="
+          cat result.txt || true
