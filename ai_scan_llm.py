@@ -54,21 +54,16 @@ def main():
         diff_text = diff_text[:max_chars] + "\n...[TRUNCATED]...\n"
 
     prompt = f"""
-You are an application security reviewer.
+Check this PR diff for OWASP Top 10 security vulnerabilities.
 
-Task:
-- Review ONLY the provided PR diff.
-- Check for OWASP Top 10 style risks (injection, auth, access control, sensitive data exposure, SSRF, insecure deserialization, etc).
-- If you see a likely exploitable vulnerability or hardcoded secrets, answer FAIL.
-- Otherwise answer PASS.
+Answer ONLY one word:
 
-Output rules (IMPORTANT):
-- Output ONLY one word: PASS or FAIL.
-- No extra text.
+PASS or FAIL
 
-PR DIFF:
+Diff:
 {diff_text}
 """.strip()
+
 
     output = call_hf(prompt)
 
