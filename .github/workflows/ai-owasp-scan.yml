@@ -33,7 +33,7 @@ jobs:
       - name: Run AI scan (PASS/FAIL)
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          HF_MODEL: "HuggingFaceH4/zephyr-7b-beta"
+          HF_MODEL: "google/flan-t5-small"
           MAX_DIFF_CHARS: "12000"
         run: |
           python3 ai_scan_llm.py pr.diff
